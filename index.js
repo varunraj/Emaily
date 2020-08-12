@@ -6,7 +6,7 @@ console.log(app.get)
 
 
 app.get('/',(req, res)=>{
-    res.send({hi:'there'})
+    res.send({hi:'Varun'})
 })
 
 
