@@ -5,7 +5,6 @@ const passport = require('passport')
 
 const keys = require('./config/keys');
 
-require('./models/User') // directly import all usermode code
 require('./services/passport')// directly execute all code from file
 
 mongoose.connect(keys.mongoURI);

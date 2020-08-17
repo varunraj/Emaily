@@ -1,10 +1,7 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy
-const mongoose = require('mongoose')
 const keys = require('../config/keys');
-
-// User below is the model class
-const User = mongoose.model('users')
+const User = require('../models/User')
 
 // create a cookie from user. user in callback below is the
 // user from calllback inside passport.use. The one with which 'done' is called
@@ -23,7 +20,7 @@ passport.deserializeUser((id,done)=>{
 passport.use(
     new GoogleStrategy({
             clientID: keys.googleClientID,
-            clientSecret: keys.googleClientSecret,
+            clientSecret: keys.googleSecret,
             callbackURL: '/auth/google/callback'
          },
          // this where we get user profile details

@@ -7,4 +7,6 @@ const userSchema = new Schema ({
 })
 
 // create a mongoose model schema binding
-mongoose.model('users', userSchema);
+const User = mongoose.model('users', userSchema);
+
+module.exports = User;

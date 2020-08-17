@@ -1,0 +1,8 @@
+// decide what set of credentials to return. Below process variable is 
+// set by heroku as production
+
+if (process.env.NODE_ENV === 'production'){
+    module.exports = require('./prod')
+} else {
+    module.exports = require ('./dev')
+}
