@@ -25,22 +25,18 @@ passport.use(
             proxy:true // this is to fix proxy issue with heroku (video 56)
          },
          // this where we get user profile details
-         (accessToken, refreshToken, profile, done)=> { 
-               User.findOne({googleId:profile.id})
-               .then((exisitingUser)=>{
-                    if (exisitingUser){
-                        // we already have user
-                        // tell done function we are done.
-                        done(null,exisitingUser)
-                    } else {
-                        new User({googleId:profile.id}).save()
-                        // tell done once promose is finished
-                        .then((user)=> done(null, user));
+         async (accessToken, refreshToken, profile, done)=> { 
+               const exisitingUser = await User.findOne({googleId:profile.id})
+               if (exisitingUser){
+                    // we already have user
+                    // tell done function we are done.
+                    done(null,exisitingUser)
+                } else {
+                    const user = await new User({googleId:profile.id}).save()
+                    // tell done once promose is finished
+                    done(null, user);
                     }
                   }
                 )
-
-         }
-        
-         )
+         
 );
