@@ -8,3 +8,10 @@ export const fetchUser = () => async dispatch => {
         dispatch({type:FETCH_USER, payload:res.data })
     }
 
+export const handleToken = (token) => {
+    return async (dispatch)=>{
+        const res = await axios.post('/api/stripe',token)
+        // below response will have user credits from user model
+        dispatch({type:FETCH_USER, payload:res.data})
+    }
+}
