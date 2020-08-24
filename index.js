@@ -26,7 +26,17 @@ app.use(passport.session());
 require('./routes/authRoutes')(app);
 require('./routes/billingRoutes')(app);
 
+// Express serving build assets of front end
+if(process.env.NODE_ENV === 'production'){
+    // Serve js and css for front end
+    app.use(express.static('client/build'))
+    // if no route recognized, serve index.html
+    const path = require('path');
+    app.get('*', (req,res)=>{
+        res.sendFile(path.resolve(__dirname,'client','build','index.html'));
+    })
 
+}
 
 // Inject port as env variable.In the heroku deployment, it is assigned
 // by env variable. In local, we will use 5000
