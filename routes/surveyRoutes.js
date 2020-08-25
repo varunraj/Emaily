@@ -2,6 +2,9 @@ const requireLogin = require('../middlewares/requireLogin')
 const requireCredits = require('../middlewares/requireCredits')
 const Survey = require('../models/Survey');
 const recipientSchema = require('../models/Recipient');
+const Mailer = require('../services/Mailer');
+const surveyTemplate = require('../services/emailTemplates/surveyTemplate');
+
 
 module.exports = app => {
 
@@ -14,7 +17,11 @@ module.exports = app => {
             recipients: recipients.split(',').map((email)=>{ return {email:email.trim()}}),
             _user:req.user.id,
             dateSent: Date.now()
-        })
+        });
+
+        // send email before saving survey in db
+
+        const mailer = new Mailer(survey, surveyTemplate(survey));
 
 
     })
