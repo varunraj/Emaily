@@ -13,6 +13,8 @@ class Mailer extends helper.Mail {
         this.recipients = this.formatAddresses(recipientSchema);
  
         this.addContent(this.body);
+        this.addClickTracking();
+        this.addRecipients();
     }
 
     formatAddresses(recipients){
@@ -20,6 +22,16 @@ class Mailer extends helper.Mail {
             return new helper.Email(email)
         } )
     }
+
+    // replace links behind yes, no button with sendgrid links for each user
+    addClickTracking(){
+
+        const trackingSettings = new helper.TrackingSettings();
+        const clickTracking = new helper.ClickTracking(true, true)
+        trackingSettings.setClickTracking(clickTracking);
+        this.addTrackingSettings(trackingSettings);
+    }
+
 
 
 }
