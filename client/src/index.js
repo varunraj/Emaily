@@ -10,8 +10,8 @@ import App from './components/App'
 import reducers from './reducers'
 
 //test survey endpoint from chrome console 
-//import axios from 'axios';
-//window.axios = axios;
+import axios from 'axios';
+window.axios = axios;
 
 
 const store = createStore(reducers, {}, applyMiddleware(reduxThunk))
