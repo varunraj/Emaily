@@ -4,15 +4,17 @@ import React from 'react'
 import {connect } from 'react-redux'
 import formFields from './formFields'
 import _ from 'lodash'
+import {withRouter} from 'react-router-dom';
 import * as actions from '../../actions'
 
-const SurveyFormReview = ({onCancel, formValues, submitSurvey}) =>{
+// history object is injected into prop by withRouter 
+const SurveyFormReview = ({onCancel, formValues, submitSurvey, history}) =>{
     
     
     const reviewFields = _.map(formFields, field =>{
         return (
             <div key={field.name}>
-                <lablel>{field.label}</lablel>
+                <label>{field.label}</label>
                 <div>
                     {formValues[field.name]}
                 </div>
@@ -33,9 +35,10 @@ const SurveyFormReview = ({onCancel, formValues, submitSurvey}) =>{
             >
                 Back
             </button>
+            
             <button 
-                className="green btn-flat right"
-                onClick={()=>submitSurvey(formValues)}    
+                className="green btn-flat right" 
+                onClick={()=>submitSurvey(formValues, history)} // pass router history to action creator    
             >
                 Send Survey
                 <i className="material-icons right">email</i>
@@ -51,5 +54,6 @@ function mapStateToProps(state){
 }
 
 
-
-export default connect(mapStateToProps, actions)(SurveyFormReview);
+//withRouter is used to redirect user back to dashboard after submitting 
+// the survey
+export default connect(mapStateToProps, actions)(withRouter(SurveyFormReview));

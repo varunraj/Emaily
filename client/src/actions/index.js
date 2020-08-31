@@ -16,6 +16,14 @@ export const handleToken = (token) => {
     }
 }
 
-export const submitSurvey = (values)=>{
-    return {type: 'submit_survey'}
+// history is passed from survey submit button for url reroute to dashboard.
+export const submitSurvey = (values, history)=>{
+    return async (dispatch)=>{
+        const res = await axios.post('/api/surveys',values)
+        history.push('/surveys')
+        // below response will have user credits from user model
+        dispatch({type:FETCH_USER, payload:res.data})
+    }
+
 }
+
