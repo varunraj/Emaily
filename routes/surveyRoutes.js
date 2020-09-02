@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const {Path} = require('path-parser');
+const mongoose = require('mongoose');
 const {URL} = require('url') // part of nodejs
 const requireLogin = require('../middlewares/requireLogin')
 const requireCredits = require('../middlewares/requireCredits')
@@ -8,12 +9,13 @@ const recipientSchema = require('../models/Recipient');
 const Mailer = require('../services/Mailer');
 const surveyTemplate = require('../services/emailTemplates/surveyTemplate');
 
+//const Survey = mongoose.model('surveys');
 
 module.exports = app => {
 
     // redirect for yes/no click
 
-    app.get('/api/surveys/thanks', (req,res)=>{
+    app.get('/api/surveys/:surveyId/:choice', (req,res)=>{
         res.send("Thank you for your feedack !")
     })
 
@@ -21,7 +23,7 @@ module.exports = app => {
         
         const p = new Path('/api/surveys/:surveyId/:choice')
 
-        const events = _.chain(req.body) 
+           _.chain(req.body) 
           .map((event)=>{
             const pathname = new URL(event.url).pathname
             const match = p.test(pathname);
@@ -36,10 +38,23 @@ module.exports = app => {
             })
             .compact() // remove undefined elements (where no match found)
             .uniqBy( 'email','surveyId') // find unique records with email and surveyId 
+            .each( ({surveyId, email, choice }) => { // issue mongo update
+                Survey.updateOne({
+                    _id:surveyId,
+                    recipients: {
+                        $elemMatch: { email: email, responded: false}
+                    }
+                }, {
+                    $inc: { [choice]: 1},
+                    $set: {'recipients.$.responded': true},
+                    lastResponded: new Date()
+                }).exec()
+            }) 
             .value(); // get final array
 
-        console.log(events)
-        
+        // above db update is async. But we dont need to wait for it 
+        // to complete before responding back to sendGrid.
+       
         res.send({}) // respond back to sendGrid
     })
 
