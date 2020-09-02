@@ -1,3 +1,6 @@
+const _ = require('lodash');
+const {Path} = require('path-parser');
+const {URL} = require('url') // part of nodejs
 const requireLogin = require('../middlewares/requireLogin')
 const requireCredits = require('../middlewares/requireCredits')
 const Survey = require('../models/Survey');
@@ -14,7 +17,31 @@ module.exports = app => {
         res.send("Thank you for your feedack !")
     })
 
+    app.post('/api/surveys/webhooks', (req,res)=>{
+        
+        const p = new Path('/api/surveys/:surveyId/:choice')
 
+        const events = _.chain(req.body) 
+          .map((event)=>{
+            const pathname = new URL(event.url).pathname
+            const match = p.test(pathname);
+            // remove data if above pattern is not found
+            if (match){
+                return {
+                        email:event.email, 
+                        surveyId: match.surveyId,
+                        choice:match.choice
+                    }
+                }
+            })
+            .compact() // remove undefined elements (where no match found)
+            .uniqBy( 'email','surveyId') // find unique records with email and surveyId 
+            .value(); // get final array
+
+        console.log(events)
+        
+        res.send({}) // respond back to sendGrid
+    })
 
     app.post('/api/surveys', requireLogin, requireCredits, async (req,res) => {
         const {title, subject, body, recipients } = req.body;
