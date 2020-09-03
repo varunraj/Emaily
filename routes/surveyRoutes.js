@@ -13,6 +13,20 @@ const surveyTemplate = require('../services/emailTemplates/surveyTemplate');
 
 module.exports = app => {
 
+    // Get the list if surveys for a user to show in dashboard
+
+    app.get('/api/surveys',requireLogin, async (req,res)=>{
+        
+       // console.log("inside getting surveys");
+        
+        const surveys = await Survey.find({ _user : req.user.id })
+            .select({recipients: false}) // dont give recipients from survey data
+        
+        res.send(surveys);
+    });
+
+
+
     // redirect for yes/no click
 
     app.get('/api/surveys/:surveyId/:choice', (req,res)=>{
